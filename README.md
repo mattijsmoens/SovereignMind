@@ -223,5 +223,5 @@ To actually *control* the VR environment using your thoughts, the engine require
    ```bash
    python server.py
    ```
-4. **Generate Mock Data**:
-   Use `python mock_data.py` to generate simulated biofeedback payloads and latent fMRI vectors for testing the endpoints.
+4. **Run the Simulator**:
+   Use `python mock_data.py` to download a real biological fMRI vector from an open dataset and push it through the live decoding pipeline to test the API.
