@@ -103,6 +103,17 @@ In a finalized consumer BCI, this deterministic hack is removed and replaced by 
    decoded_text = tokenizer.decode(generated_tokens)
    ```
 
+### The Ultimate Bidirectional Loop (Thought-Controlled Reality)
+Once the LoRA adapter is trained on a specific user, the system becomes a completely frictionless, closed-loop Holodeck controlled purely by thought:
+1. **You Think (Read-Access):** You visualize or think a command (e.g., *"Change the sky to red"*).
+2. **The Scanner Reads:** The BCI hardware (fMRI/EEG) captures the latent neural vector of that thought.
+3. **The LoRA Translates:** Your personalized LoRA adapter instantly translates those raw brain waves into the English string: `"Change the sky to red"`.
+4. **The Engine Processes:** SovereignMind takes that string and automatically routes it into the **Sensory Stimulus Engineer** (`/generate_stimulus`).
+5. **The Environment Responds (Write-Access):** SovereignShield verifies the intent, calculates the exact hex color for red (`#FF0000`), and sends the JSON payload to the Oculus Quest 2.
+6. **You See It:** The VR headset immediately shifts the sky to red.
+
+Your inner monologue becomes the direct operating system for the reality you are experiencing, and the system dynamically writes it back to your eyes and ears in real-time.
+
 ---
 
 ## API Endpoints
