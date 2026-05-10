@@ -24,6 +24,9 @@ try:
 except ImportError:
     print("[WARNING] PyTorch, Transformers, or PEFT not installed. This is a blueprint script.")
     nn = object
+    class TaskType: CAUSAL_LM = "CAUSAL_LM"
+    class LoraConfig:
+        def __init__(self, **kwargs): pass
 
 logging.basicConfig(level=logging.INFO)
 
