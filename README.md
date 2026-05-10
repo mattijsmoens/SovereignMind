@@ -1,5 +1,9 @@
 # SovereignMind: Neuro-Semantic BCI Translation Engine
 
+> [!IMPORTANT]
+> **RESEARCH PROTOTYPE & SIMULATION ARCHITECTURE**
+> SovereignMind is a purely software-driven proof-of-concept. While the AI translation mechanics and cryptographic consensus pipelines are fully functional and tested against real-world biological datasets, the physical consumer hardware required to run this in a real-time "Holodeck" loop does not currently exist. This repository serves as a functional architectural blueprint for the future of non-invasive BCI software. See the [Hardware Requirements & Scientific Limitations](#-hardware-requirements--prototyping) section for more details.
+
 **SovereignMind** is a revolutionary, non-invasive Brain-Computer Interface (BCI) module built on the **SovereignShield N-Model AI Consensus Architecture**. 
 
 Unlike legacy BCI systems that rely on invasive surgical hardware (e.g., neural laces) or passive, low-resolution EEG caps, SovereignMind operates entirely through high-bandwidth natural input/output ports: **Audio, Visual, and Semantic Language pathways.**
