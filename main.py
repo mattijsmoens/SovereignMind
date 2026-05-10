@@ -16,78 +16,7 @@ logger = logging.getLogger("SovereignMind")
 os.environ["SOVEREIGN_MCP_SKIP_INTEGRITY"] = "1"
 
 from sovereign_mcp import ToolRegistry, OutputGate, ConsensusVerifier
-from sovereign_mcp.consensus import ModelProvider
-
-class OpenRouterMCPProvider(ModelProvider):
-    def __init__(self, model_id, api_key):
-        super().__init__(model_id, temperature=0)
-        self.api_key = api_key
-
-    def extract_structured(self, content, schema, system_prompt=None):
-        url = "https://openrouter.ai/api/v1/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        if not system_prompt:
-            prompt = f"Return ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}\n\nData:\n{content}"
-        else:
-            prompt = f"{system_prompt}\n\nData:\n{content}\n\nReturn ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
-        
-        payload = {
-            "model": self.model_id,
-            "temperature": 0,
-            "response_format": {"type": "json_object"},
-            "messages": [{"role": "user", "content": prompt}]
-        }
-        
-        response = requests.post(url, headers=headers, json=payload, timeout=20)
-        if response.status_code != 200:
-            raise RuntimeError(f"OpenRouter Error: {response.text}")
-            
-        data = response.json()
-        raw_output = data["choices"][0]["message"]["content"]
-        
-        try:
-            return json.loads(raw_output)
-        except json.JSONDecodeError:
-            raw_output = raw_output.replace("```json", "").replace("```", "").strip()
-            return json.loads(raw_output)
-
-class LocalMCPProvider(ModelProvider):
-    def __init__(self, model_id, base_url="http://localhost:11434/v1"):
-        super().__init__(model_id, temperature=0)
-        self.base_url = base_url
-
-    def extract_structured(self, content, schema, system_prompt=None):
-        url = f"{self.base_url}/chat/completions"
-        headers = {"Content-Type": "application/json"}
-        
-        if not system_prompt:
-            prompt = f"Return ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}\n\nData:\n{content}"
-        else:
-            prompt = f"{system_prompt}\n\nData:\n{content}\n\nReturn ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
-        
-        payload = {
-            "model": self.model_id,
-            "temperature": 0,
-            "response_format": {"type": "json_object"},
-            "messages": [{"role": "user", "content": prompt}]
-        }
-        
-        response = requests.post(url, headers=headers, json=payload, timeout=30)
-        if response.status_code != 200:
-            raise RuntimeError(f"Local LLM Error: {response.text}")
-            
-        data = response.json()
-        raw_output = data["choices"][0]["message"]["content"]
-        
-        try:
-            return json.loads(raw_output)
-        except json.JSONDecodeError:
-            raw_output = raw_output.replace("```json", "").replace("```", "").strip()
-            return json.loads(raw_output)
+from sovereign_mcp.consensus import ModelProvider, LocalMCPProvider, OpenRouterMCPProvider
 
 output_schema = {
     "audio_frequency_hz": {"type": "integer", "description": "Target binaural/isochronic beat frequency in Hz (e.g., 40 for focus, 4 for sleep)"},
