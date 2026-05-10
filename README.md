@@ -12,7 +12,7 @@ By treating the human brain as a protected endpoint, SovereignMind utilizes cryp
 
 ---
 
-## 🔬 Research Background & Origins
+## Research Background & Origins
 
 The architecture of SovereignMind was conceived as a non-invasive alternative to surgical BCI solutions (like Neuralink). Rather than physically wiring conductors into the motor cortex, the system recognizes that the human brain already possesses incredibly high-bandwidth, biologically optimized input and output ports: our eyes, ears, and semantic processing centers.
 
@@ -49,7 +49,7 @@ SovereignMind implements the core philosophies of **IntentShield** and **LogicSh
 
 ---
 
-## 📂 Codebase File Structure
+## Codebase File Structure
 
 The project is organized into four core files, each handling a specific piece of the bidirectional translation pipeline:
 
@@ -83,7 +83,7 @@ The architectural blueprint for the real-world Neural-to-Semantic training pipel
 
 ---
 
-## 🧠 From Prototype to Production (The LoRA Extractor)
+## From Prototype to Production (The LoRA Extractor)
 
 The current repository contains a fully functional end-to-end pipeline. However, to prove that the system can cryptographically verify biological data without requiring a massive cluster of GPUs for local ML training, we utilize a **deterministic prototype hack**.
 
@@ -198,7 +198,7 @@ All cryptographically approved parameters, decodings, and telemetry efficacy sco
 
 ---
 
-## 🔌 Hardware Requirements & Prototyping
+## Hardware Requirements & Prototyping
 
 SovereignMind is a purely software-driven translation engine. To interface it with the real world, it requires external hardware for both "Read" and "Write" access.
 
