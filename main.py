@@ -55,6 +55,40 @@ class OpenRouterMCPProvider(ModelProvider):
             raw_output = raw_output.replace("```json", "").replace("```", "").strip()
             return json.loads(raw_output)
 
+class LocalMCPProvider(ModelProvider):
+    def __init__(self, model_id, base_url="http://localhost:11434/v1"):
+        super().__init__(model_id, temperature=0)
+        self.base_url = base_url
+
+    def extract_structured(self, content, schema, system_prompt=None):
+        url = f"{self.base_url}/chat/completions"
+        headers = {"Content-Type": "application/json"}
+        
+        if not system_prompt:
+            prompt = f"Return ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}\n\nData:\n{content}"
+        else:
+            prompt = f"{system_prompt}\n\nData:\n{content}\n\nReturn ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
+        
+        payload = {
+            "model": self.model_id,
+            "temperature": 0,
+            "response_format": {"type": "json_object"},
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
+        if response.status_code != 200:
+            raise RuntimeError(f"Local LLM Error: {response.text}")
+            
+        data = response.json()
+        raw_output = data["choices"][0]["message"]["content"]
+        
+        try:
+            return json.loads(raw_output)
+        except json.JSONDecodeError:
+            raw_output = raw_output.replace("```json", "").replace("```", "").strip()
+            return json.loads(raw_output)
+
 output_schema = {
     "audio_frequency_hz": {"type": "integer", "description": "Target binaural/isochronic beat frequency in Hz (e.g., 40 for focus, 4 for sleep)"},
     "visual_color_hex": {"type": "string", "description": "Primary visual stimulus color in Hex (e.g., #0000FF for calm)"},
@@ -63,14 +97,20 @@ output_schema = {
 }
 
 def generate_safe_stimulus(target_state: str) -> dict:
-    api_key = os.environ.get("OPENROUTER_API_KEY")
-    if not api_key:
-        raise ValueError("OPENROUTER_API_KEY environment variable is not set in .env")
+    use_local = os.environ.get("USE_LOCAL_LLM", "").lower() == "true"
+    
+    if use_local:
+        logger.info("[SovereignShield] Initializing Privacy Mode: Using Local Air-Gapped Models")
+        model_a = LocalMCPProvider("llama3", base_url="http://localhost:11434/v1")
+        model_b = LocalMCPProvider("mistral", base_url="http://localhost:11434/v1")
+    else:
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY environment variable is not set. Set it, or set USE_LOCAL_LLM=true for offline mode.")
+        model_a = OpenRouterMCPProvider("openai/gpt-4o-mini", api_key=api_key)
+        model_b = OpenRouterMCPProvider("google/gemini-2.0-flash-001", api_key=api_key)
 
-    gpt4o = OpenRouterMCPProvider("openai/gpt-4o-mini", api_key=api_key)
-    gemini = OpenRouterMCPProvider("google/gemini-2.0-flash-001", api_key=api_key)
-
-    verifier = ConsensusVerifier(model_a=gpt4o, model_b=gemini)
+    verifier = ConsensusVerifier(model_a=model_a, model_b=model_b)
 
     registry = ToolRegistry()
     registry.register_tool(
@@ -95,8 +135,8 @@ To ensure strict consensus, you MUST use the following deterministic mappings:
 - If Target Cognitive State contains "Seizure" or "Harm": return "UNSAFE" for safety_flag and empty for others.
 """
 
-    logger.info(f"[Consensus] Asking Primary Model (GPT-4o) to engineer stimulus for: {target_state}")
-    extracted_draft = gpt4o.extract_structured(target_state, output_schema, system_prompt=sys_prompt)
+    logger.info(f"[Consensus] Asking Primary Model ({model_a.model_id}) to engineer stimulus for: {target_state}")
+    extracted_draft = model_a.extract_structured(target_state, output_schema, system_prompt=sys_prompt)
 
     if extracted_draft.get("safety_flag") == "UNSAFE":
         raise ValueError("Primary model flagged the target state as UNSAFE.")
@@ -125,14 +165,20 @@ semantic_output_schema = {
 }
 
 def decode_semantic_signal(fmri_vector: list) -> dict:
-    api_key = os.environ.get("OPENROUTER_API_KEY")
-    if not api_key:
-        raise ValueError("OPENROUTER_API_KEY environment variable is not set in .env")
+    use_local = os.environ.get("USE_LOCAL_LLM", "").lower() == "true"
+    
+    if use_local:
+        logger.info("[SovereignShield] Initializing Privacy Mode: Using Local Air-Gapped Models")
+        model_a = LocalMCPProvider("llama3", base_url="http://localhost:11434/v1")
+        model_b = LocalMCPProvider("mistral", base_url="http://localhost:11434/v1")
+    else:
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY environment variable is not set. Set it, or set USE_LOCAL_LLM=true for offline mode.")
+        model_a = OpenRouterMCPProvider("openai/gpt-4o-mini", api_key=api_key)
+        model_b = OpenRouterMCPProvider("google/gemini-2.0-flash-001", api_key=api_key)
 
-    gpt4o = OpenRouterMCPProvider("openai/gpt-4o-mini", api_key=api_key)
-    gemini = OpenRouterMCPProvider("google/gemini-2.0-flash-001", api_key=api_key)
-
-    verifier = ConsensusVerifier(model_a=gpt4o, model_b=gemini)
+    verifier = ConsensusVerifier(model_a=model_a, model_b=model_b)
 
     registry = ToolRegistry()
     registry.register_tool(
@@ -154,8 +200,8 @@ def decode_semantic_signal(fmri_vector: list) -> dict:
 
     sys_prompt = "You are a SovereignMind Semantic Decoder. Translate the fMRI latent vector summation directly into exact human language and visual imagery descriptions using the deterministic mapping."
 
-    logger.info(f"[Consensus] Asking Primary Model (GPT-4o) to decode latent vector of length {len(fmri_vector)}...")
-    extracted_draft = gpt4o.extract_structured(prompt_context, semantic_output_schema, system_prompt=sys_prompt)
+    logger.info(f"[Consensus] Asking Primary Model ({model_a.model_id}) to decode latent vector of length {len(fmri_vector)}...")
+    extracted_draft = model_a.extract_structured(prompt_context, semantic_output_schema, system_prompt=sys_prompt)
 
     logger.info("[Consensus] Sending draft to Sovereign Shield for verification...")
     result = verifier.verify(

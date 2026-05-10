@@ -37,6 +37,10 @@ Instead of passively reading brain waves, SovereignMind **actively writes** targ
 Leveraging cutting-edge research in non-invasive fMRI BOLD and MEG decoding, SovereignMind translates raw latent neural vectors directly into human language and visual imagery.
 - **How it Works**: A latent semantic vector (representing regional brain activations) is passed into the N-Model Consensus engine. The LLM panel decodes the latent space and reconstructs the exact inner monologue (sentence) and visual scene the user is experiencing.
 
+### 3. Privacy-First Local Mode (Air-Gapped Operation)
+Because neural decodings contain highly sensitive internal monologue, SovereignMind fully supports 100% offline, air-gapped extraction.
+- **How it Works**: By setting the `USE_LOCAL_LLM=true` environment flag, the API entirely disconnects from cloud providers (OpenRouter/GPT-4o) and routes all consensus verification and semantic extraction to a local LLM runner (e.g., **Ollama** or **LM Studio**) running on `localhost:11434`. This guarantees your neural data never leaves your physical machine.
+
 ---
 
 ## SovereignShield Safety & Enforcement
@@ -230,7 +234,8 @@ To actually *control* the VR environment using your thoughts, the engine require
    pip install -r requirements.txt
    ```
 2. **Environment Configuration**:
-   Ensure `OPENROUTER_API_KEY` is set in your `.env` file to power the LLM Consensus panel.
+   - **Cloud Mode:** Ensure `OPENROUTER_API_KEY` is set in your `.env` file to power the LLM Consensus panel via GPT-4o and Gemini.
+   - **Local Privacy Mode:** Set `USE_LOCAL_LLM=true` in your `.env` file and ensure Ollama is running locally with the `llama3` and `mistral` models installed (`ollama run llama3`).
 3. **Start the Engine**:
    ```bash
    python server.py
