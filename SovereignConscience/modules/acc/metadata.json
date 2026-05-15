@@ -1,0 +1,16 @@
+{
+  "name": "acc",
+  "config": {
+    "description": "Empathy Engine \u2014 anterior cingulate cortex",
+    "atlas_labels": [
+      "Cingulate Gyrus, anterior division"
+    ],
+    "target_emotions": [
+      "calm",
+      "delighted"
+    ],
+    "moral_role": "empathy_compassion"
+  },
+  "cv_accuracy": 0.34,
+  "is_trained": true
+}

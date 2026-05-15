@@ -1,121 +1,217 @@
 """
-SovereignMind: Neural-to-Semantic LoRA Extractor (Architecture Blueprint)
+SovereignMind: Neural Semantic Decoder (HuthLab Integration)
 
-This script serves as the architectural blueprint for the real-world machine learning pipeline
-required to transition SovereignMind from a deterministic prototype to a true, personalized BCI.
+This module wraps the real UT Austin HuthLab semantic decoding pipeline
+(Tang et al., Nature Neuroscience 2023) into a callable Python interface
+for use by the SovereignMind consensus engine.
 
-It demonstrates how to use Parameter-Efficient Fine-Tuning (PEFT) and Low-Rank Adaptation (LoRA)
-to train a custom neural projection layer that maps raw fMRI/EEG vectors into the embedding space
-of an Open-Source Large Language Model (e.g., LLaMA-3).
+Paper: "Semantic reconstruction of continuous language from non-invasive brain recordings"
+Authors: Jerry Tang, Amanda LeBel, Shailee Jain, Alexander G. Huth
+Repository: https://github.com/HuthLab/semantic-decoding
 
-Note: This is a structural blueprint. Executing it requires a GPU and installed libraries:
-`pip install torch transformers peft`
+Requirements:
+    - Pre-fit encoding models in semantic-decoding/models/[SUBJECT_ID]/
+    - Language model data in semantic-decoding/data_lm/
+    - numpy, scipy, h5py, torch
 """
 
 import os
+import sys
 import json
 import logging
-
-try:
-    import torch
-    import torch.nn as nn
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    from peft import LoraConfig, get_peft_model, TaskType
-except ImportError:
-    print("[WARNING] PyTorch, Transformers, or PEFT not installed. This is a blueprint script.")
-    nn = object
-    class TaskType: CAUSAL_LM = "CAUSAL_LM"
-    class LoraConfig:
-        def __init__(self, **kwargs): pass
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("SovereignMind.Decoder")
 
-class BrainVectorProjector(nn.Module if nn is not object else object):
-    """
-    A Neural Projection Layer.
-    This acts as the bridge between the biology (fMRI/EEG vector) and the AI (LLM).
-    It projects a 1D biological vector into the high-dimensional hidden dimension of the LLM.
-    """
-    def __init__(self, input_dim: int, llm_hidden_dim: int):
-        super(BrainVectorProjector, self).__init__()
-        # Simple Multi-Layer Perceptron (MLP) to map biological signals to semantic space
-        self.projector = nn.Sequential(
-            nn.Linear(input_dim, 512),
-            nn.ReLU(),
-            nn.LayerNorm(512),
-            nn.Linear(512, llm_hidden_dim)
-        )
+# Add the HuthLab decoding directory to sys.path so we can import their modules
+HUTHLAB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "semantic-decoding", "decoding")
+if HUTHLAB_DIR not in sys.path:
+    sys.path.insert(0, HUTHLAB_DIR)
 
-    def forward(self, brain_vector):
-        """
-        Takes raw biological data and returns an LLM-compatible embedding.
-        """
-        return self.projector(brain_vector)
+# Detect device - fallback to CPU if CUDA is not available
+try:
+    import torch
+    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    logger.info(f"[HuthLab] PyTorch device: {DEVICE}")
+except ImportError:
+    DEVICE = "cpu"
+    logger.warning("[HuthLab] PyTorch not installed. Decoder will not function until 'pip install torch' is run.")
 
 
-def setup_lora_extractor(model_name="meta-llama/Meta-Llama-3-8B", input_vector_size=19):
+def patch_huthlab_config_for_device():
     """
-    Initializes the base LLM and attaches the LoRA adapters for personalized brain-training.
+    The HuthLab config.py hardcodes 'cuda' for all devices.
+    This patches it at runtime to use CPU if no GPU is available.
     """
-    logging.info(f"Loading Base LLM: {model_name}")
-    
-    # In a real environment, you'd load the model to CUDA
-    # tokenizer = AutoTokenizer.from_pretrained(model_name)
-    # base_model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
-    
-    logging.info("Applying LoRA Adapters (PEFT)...")
-    lora_config = LoraConfig(
-        task_type=TaskType.CAUSAL_LM,
-        r=16,               # Rank of the update matrices
-        lora_alpha=32,      # LoRA scaling factor
-        lora_dropout=0.05,
-        target_modules=["q_proj", "v_proj"] # Target attention layers to make the model adaptable
-    )
-    
-    # lora_model = get_peft_model(base_model, lora_config)
-    # llm_hidden_dim = base_model.config.hidden_size
-    
-    # Initialize the bridge
-    # projector = BrainVectorProjector(input_dim=input_vector_size, llm_hidden_dim=llm_hidden_dim)
-    
-    logging.info("LoRA Extractor Pipeline initialized.")
-    return None, None # Returns (lora_model, projector) in production
+    try:
+        import config as huthlab_config
+        huthlab_config.GPT_DEVICE = DEVICE
+        huthlab_config.EM_DEVICE = DEVICE
+        huthlab_config.SM_DEVICE = DEVICE
+        logger.info(f"[HuthLab] Patched all devices to: {DEVICE}")
+    except ImportError:
+        logger.error("[HuthLab] Could not import HuthLab config. Is semantic-decoding cloned?")
 
 
-def train_subject_adapter(subject_id="s0", epochs=10):
+def check_models_exist(subject_id: str) -> bool:
     """
-    The Training Loop Blueprint.
-    This describes how a user trains their personalized BCI.
-    
-    1. The user wears the VR headset and the EEG/fMRI scanner.
-    2. The VR headset displays a word or scene (e.g., "A red apple").
-    3. The scanner records the biological vector.
-    4. We backpropagate the loss to train the BrainVectorProjector and the LoRA adapters
-       so that the biological vector naturally generates the text "A red apple".
+    Verifies that the pre-fit encoding models exist for a given subject.
+    Returns True if models are found, False otherwise.
     """
-    logging.info(f"Starting LoRA training session for Subject: {subject_id}")
+    models_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                               "semantic-decoding", "models", subject_id)
+    if not os.path.exists(models_dir):
+        logger.error(f"[HuthLab] No models found for subject '{subject_id}' at: {models_dir}")
+        logger.error("[HuthLab] Download pre-fit models from: https://utexas.box.com/s/ri13t06iwpkyk17h8tfk0dtyva7qtqlz")
+        return False
     
-    # 1. Load the user's recorded training data (Vector -> Target Text pairs)
-    # Example: [-0.039, -0.057, ...] -> "A red apple"
+    # Check for required model files
+    required_files = ["encoding_model_perceived.npz"]
+    for f in required_files:
+        if not os.path.exists(os.path.join(models_dir, f)):
+            logger.error(f"[HuthLab] Missing model file: {f} in {models_dir}")
+            return False
     
-    # 2. Setup Optimizer (e.g., AdamW) for both the Projector and the LoRA layers
+    logger.info(f"[HuthLab] Pre-fit models verified for subject: {subject_id}")
+    return True
+
+
+def decode_fmri_response(subject_id: str, experiment: str, task: str) -> dict:
+    """
+    Runs the real HuthLab semantic decoder on pre-recorded fMRI brain responses.
     
-    # 3. Training Loop:
-    for epoch in range(epochs):
-        logging.info(f"Epoch {epoch+1}/{epochs} - Simulating forward pass and backprop...")
+    This is the actual decoder from the Nature Neuroscience 2023 paper.
+    It uses Ridge Regression encoding models + GPT-based beam search to reconstruct
+    continuous language from non-invasive brain recordings.
+    
+    Args:
+        subject_id: The subject identifier (e.g., "UTS01", "UTS02", "UTS03")
+        experiment: The experiment type (e.g., "perceived_speech", "imagined_speech", "perceived_movies")
+        task: The specific task/story name within the experiment
         
-        # Pseudo-code for the mathematical pipeline:
-        # brain_embeddings = projector(raw_biological_vector)
-        # text_embeddings = tokenizer("A red apple")
-        # concatenated_inputs = [brain_embeddings, text_embeddings]
-        # outputs = lora_model(inputs_embeds=concatenated_inputs, labels=target_labels)
-        # loss = outputs.loss
-        # loss.backward()
-        # optimizer.step()
-        
-    logging.info(f"Training complete. Subject-specific LoRA adapter saved to /models/{subject_id}_adapter.pt")
+    Returns:
+        dict with keys:
+            - "decoded_words": list of reconstructed words
+            - "word_times": list of predicted word onset times
+            - "subject": the subject ID used
+            - "experiment": the experiment type
+            - "task": the task name
+    """
+    patch_huthlab_config_for_device()
+    
+    import config as huthlab_config
+    import h5py
+    from GPT import GPT
+    from Decoder import Decoder, Hypothesis
+    from LanguageModel import LanguageModel
+    from EncodingModel import EncodingModel
+    from StimulusModel import StimulusModel, get_lanczos_mat, affected_trs, LMFeatures
+    from utils_stim import predict_word_rate, predict_word_times
+    
+    # Validate models exist
+    if not check_models_exist(subject_id):
+        raise FileNotFoundError(f"Pre-fit models not found for subject '{subject_id}'. "
+                                 "Download from: https://utexas.box.com/s/ri13t06iwpkyk17h8tfk0dtyva7qtqlz")
+    
+    # Determine GPT checkpoint based on experiment type
+    if experiment in ["imagined_speech"]:
+        gpt_checkpoint = "imagined"
+    else:
+        gpt_checkpoint = "perceived"
+    
+    # Determine word rate model voxels based on experiment type
+    if experiment in ["imagined_speech", "perceived_movies"]:
+        word_rate_voxels = "speech"
+    else:
+        word_rate_voxels = "auditory"
+    
+    # Load fMRI brain responses
+    response_path = os.path.join(huthlab_config.DATA_TEST_DIR, "test_response", 
+                                  subject_id, experiment, task + ".hf5")
+    logger.info(f"[HuthLab] Loading fMRI responses from: {response_path}")
+    hf = h5py.File(response_path, "r")
+    resp = np.nan_to_num(hf["data"][:])
+    hf.close()
+    logger.info(f"[HuthLab] Loaded response matrix: {resp.shape}")
+    
+    # Load GPT language model
+    logger.info(f"[HuthLab] Loading GPT checkpoint: {gpt_checkpoint}")
+    with open(os.path.join(huthlab_config.DATA_LM_DIR, gpt_checkpoint, "vocab.json"), "r") as f:
+        gpt_vocab = json.load(f)
+    with open(os.path.join(huthlab_config.DATA_LM_DIR, "decoder_vocab.json"), "r") as f:
+        decoder_vocab = json.load(f)
+    gpt = GPT(path=os.path.join(huthlab_config.DATA_LM_DIR, gpt_checkpoint, "model"), 
+              vocab=gpt_vocab, device=huthlab_config.GPT_DEVICE)
+    features = LMFeatures(model=gpt, layer=huthlab_config.GPT_LAYER, context_words=huthlab_config.GPT_WORDS)
+    lm = LanguageModel(gpt, decoder_vocab, nuc_mass=huthlab_config.LM_MASS, nuc_ratio=huthlab_config.LM_RATIO)
+    
+    # Load pre-fit encoding model and word rate model
+    load_location = os.path.join(huthlab_config.MODEL_DIR, subject_id)
+    logger.info(f"[HuthLab] Loading pre-fit encoding model from: {load_location}")
+    word_rate_model = np.load(os.path.join(load_location, "word_rate_model_%s.npz" % word_rate_voxels), allow_pickle=True)
+    encoding_model = np.load(os.path.join(load_location, "encoding_model_%s.npz" % gpt_checkpoint))
+    weights = encoding_model["weights"]
+    noise_model = encoding_model["noise_model"]
+    tr_stats = encoding_model["tr_stats"]
+    word_stats = encoding_model["word_stats"]
+    em = EncodingModel(resp, weights, encoding_model["voxels"], noise_model, device=huthlab_config.EM_DEVICE)
+    em.set_shrinkage(huthlab_config.NM_ALPHA)
+    
+    # Predict word timing from brain responses
+    logger.info("[HuthLab] Predicting word rate from brain responses...")
+    word_rate = predict_word_rate(resp, word_rate_model["weights"], word_rate_model["voxels"], word_rate_model["mean_rate"])
+    if experiment == "perceived_speech":
+        word_times, tr_times = predict_word_times(word_rate, resp, starttime=-10)
+    else:
+        word_times, tr_times = predict_word_times(word_rate, resp, starttime=0)
+    lanczos_mat = get_lanczos_mat(word_times, tr_times)
+    
+    # Run beam search decoding - THIS IS THE REAL DECODER
+    logger.info(f"[HuthLab] Running beam search decoder (width={huthlab_config.WIDTH}) over {len(word_times)} word positions...")
+    decoder = Decoder(word_times, huthlab_config.WIDTH)
+    sm = StimulusModel(lanczos_mat, tr_stats, word_stats[0], device=huthlab_config.SM_DEVICE)
+    for sample_index in range(len(word_times)):
+        trs = affected_trs(decoder.first_difference(), sample_index, lanczos_mat)
+        ncontext = decoder.time_window(sample_index, huthlab_config.LM_TIME, floor=5)
+        beam_nucs = lm.beam_propose(decoder.beam, ncontext)
+        for c, (hyp, nextensions) in enumerate(decoder.get_hypotheses()):
+            nuc, logprobs = beam_nucs[c]
+            if len(nuc) < 1:
+                continue
+            extend_words = [hyp.words + [x] for x in nuc]
+            extend_embs = list(features.extend(extend_words))
+            stim = sm.make_variants(sample_index, hyp.embs, extend_embs, trs)
+            likelihoods = em.prs(stim, trs)
+            local_extensions = [Hypothesis(parent=hyp, extension=x) for x in zip(nuc, logprobs, extend_embs)]
+            decoder.add_extensions(local_extensions, likelihoods, nextensions)
+        decoder.extend(verbose=False)
+    
+    decoded_words = decoder.beam[0].words
+    logger.info(f"[HuthLab] Decoding complete. Reconstructed {len(decoded_words)} words.")
+    logger.info(f"[HuthLab] Decoded text: {' '.join(decoded_words[:50])}...")
+    
+    return {
+        "decoded_words": decoded_words,
+        "decoded_text": " ".join(decoded_words),
+        "word_times": word_times.tolist() if hasattr(word_times, 'tolist') else list(word_times),
+        "subject": subject_id,
+        "experiment": experiment,
+        "task": task
+    }
+
 
 if __name__ == "__main__":
-    print("--- SovereignMind LoRA Extractor Blueprint ---")
-    setup_lora_extractor()
-    train_subject_adapter()
+    import argparse
+    parser = argparse.ArgumentParser(description="SovereignMind HuthLab Semantic Decoder")
+    parser.add_argument("--subject", type=str, required=True, help="Subject ID (e.g., UTS01)")
+    parser.add_argument("--experiment", type=str, required=True, help="Experiment type (e.g., perceived_speech)")
+    parser.add_argument("--task", type=str, required=True, help="Task/story name")
+    args = parser.parse_args()
+    
+    result = decode_fmri_response(args.subject, args.experiment, args.task)
+    print("\n=== Decoded Brain Signal ===")
+    print(f"Subject: {result['subject']}")
+    print(f"Experiment: {result['experiment']}")
+    print(f"Task: {result['task']}")
+    print(f"Decoded Text: {result['decoded_text']}")

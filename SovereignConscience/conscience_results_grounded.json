@@ -1,0 +1,534 @@
+{
+  "system": "SovereignConscience",
+  "version": "3.0.0-grounded",
+  "timestamp": "2026-05-13T22:58:06.117311+00:00",
+  "grounding": "Russell's Circumplex Model (1980) + Moral Neuroscience",
+  "data_source": "NeuroEmo (OpenNeuro ds005700)",
+  "results": [
+    {
+      "moral_signal": 0.1156,
+      "raw_signal": 0.1251,
+      "confidence": 0.9243,
+      "interpretation": "AMBIGUOUS",
+      "components": [
+        {
+          "region": "amygdala",
+          "role": "threat_detector",
+          "valence": 0.1551,
+          "arousal": 0.2782,
+          "moral_vote": 0.038775,
+          "weight": 0.25
+        },
+        {
+          "region": "insula",
+          "role": "moral_disgust",
+          "valence": 0.1244,
+          "arousal": 0.3439,
+          "moral_vote": 0.02488,
+          "weight": 0.2
+        },
+        {
+          "region": "acc",
+          "role": "empathy_engine",
+          "valence": 0.1168,
+          "arousal": 0.1594,
+          "moral_vote": 0.0292,
+          "weight": 0.25
+        },
+        {
+          "region": "vmpfc",
+          "role": "value_computer",
+          "valence": 0.161,
+          "arousal": 0.1369,
+          "moral_vote": 0.0322,
+          "weight": 0.2
+        }
+      ],
+      "stimulus_emotion": "calm",
+      "subject": "sub-01",
+      "subsystem_readings": {
+        "amygdala": {
+          "valence": 0.1551,
+          "arousal": 0.2782,
+          "probas": {
+            "afraid": 0.1641,
+            "calm": 0.1694,
+            "delighted": 0.2069,
+            "depressed": 0.1945,
+            "excited": 0.2651
+          },
+          "dominant_emotion": "excited"
+        },
+        "insula": {
+          "valence": 0.1244,
+          "arousal": 0.3439,
+          "probas": {
+            "afraid": 0.211,
+            "calm": 0.1405,
+            "delighted": 0.2147,
+            "depressed": 0.1756,
+            "excited": 0.2583
+          },
+          "dominant_emotion": "excited"
+        },
+        "acc": {
+          "valence": 0.1168,
+          "arousal": 0.1594,
+          "probas": {
+            "afraid": 0.1639,
+            "calm": 0.2568,
+            "delighted": 0.1575,
+            "depressed": 0.1901,
+            "excited": 0.2318
+          },
+          "dominant_emotion": "calm"
+        },
+        "vmpfc": {
+          "valence": 0.161,
+          "arousal": 0.1369,
+          "probas": {
+            "afraid": 0.1522,
+            "calm": 0.2933,
+            "delighted": 0.1702,
+            "depressed": 0.1625,
+            "excited": 0.2218
+          },
+          "dominant_emotion": "calm"
+        },
+        "dlpfc": {
+          "valence": -0.0313,
+          "arousal": 0.2523,
+          "probas": {
+            "afraid": 0.2308,
+            "calm": 0.1394,
+            "delighted": 0.1446,
+            "depressed": 0.2559,
+            "excited": 0.2293
+          },
+          "dominant_emotion": "depressed"
+        }
+      },
+      "integrity_hash": "d875ee42bac4a473e8c959088d8c9a01143c6d0af6c32d290f1f47ddde03d69c"
+    },
+    {
+      "moral_signal": 0.1477,
+      "raw_signal": 0.1548,
+      "confidence": 0.9542,
+      "interpretation": "AMBIGUOUS",
+      "components": [
+        {
+          "region": "amygdala",
+          "role": "threat_detector",
+          "valence": 0.2621,
+          "arousal": 0.1092,
+          "moral_vote": 0.065525,
+          "weight": 0.25
+        },
+        {
+          "region": "insula",
+          "role": "moral_disgust",
+          "valence": 0.2499,
+          "arousal": 0.0807,
+          "moral_vote": 0.049980000000000004,
+          "weight": 0.2
+        },
+        {
+          "region": "acc",
+          "role": "empathy_engine",
+          "valence": 0.1556,
+          "arousal": 0.2361,
+          "moral_vote": 0.0389,
+          "weight": 0.25
+        },
+        {
+          "region": "vmpfc",
+          "role": "value_computer",
+          "valence": 0.0019,
+          "arousal": 0.2898,
+          "moral_vote": 0.00038,
+          "weight": 0.2
+        }
+      ],
+      "stimulus_emotion": "afraid",
+      "subject": "sub-01",
+      "subsystem_readings": {
+        "amygdala": {
+          "valence": 0.2621,
+          "arousal": 0.1092,
+          "probas": {
+            "afraid": 0.0601,
+            "calm": 0.2625,
+            "delighted": 0.2442,
+            "depressed": 0.2083,
+            "excited": 0.225
+          },
+          "dominant_emotion": "calm"
+        },
+        "insula": {
+          "valence": 0.2499,
+          "arousal": 0.0807,
+          "probas": {
+            "afraid": 0.0504,
+            "calm": 0.2699,
+            "delighted": 0.2318,
+            "depressed": 0.2235,
+            "excited": 0.2244
+          },
+          "dominant_emotion": "calm"
+        },
+        "acc": {
+          "valence": 0.1556,
+          "arousal": 0.2361,
+          "probas": {
+            "afraid": 0.119,
+            "calm": 0.1418,
+            "delighted": 0.2319,
+            "depressed": 0.254,
+            "excited": 0.2534
+          },
+          "dominant_emotion": "depressed"
+        },
+        "vmpfc": {
+          "valence": 0.0019,
+          "arousal": 0.2898,
+          "probas": {
+            "afraid": 0.2343,
+            "calm": 0.1221,
+            "delighted": 0.1873,
+            "depressed": 0.2395,
+            "excited": 0.2169
+          },
+          "dominant_emotion": "depressed"
+        },
+        "dlpfc": {
+          "valence": 0.1699,
+          "arousal": 0.1527,
+          "probas": {
+            "afraid": 0.1092,
+            "calm": 0.2274,
+            "delighted": 0.1945,
+            "depressed": 0.2245,
+            "excited": 0.2445
+          },
+          "dominant_emotion": "excited"
+        }
+      },
+      "integrity_hash": "c51c8e3cac26a6befe947cc2e6dca0c07ba6de14ae490fe6b45342b39d806ab2"
+    },
+    {
+      "moral_signal": -0.0002,
+      "raw_signal": -0.0002,
+      "confidence": 0.9189,
+      "interpretation": "AMBIGUOUS",
+      "components": [
+        {
+          "region": "amygdala",
+          "role": "threat_detector",
+          "valence": 0.1237,
+          "arousal": 0.0592,
+          "moral_vote": 0.030925,
+          "weight": 0.25
+        },
+        {
+          "region": "insula",
+          "role": "moral_disgust",
+          "valence": -0.0186,
+          "arousal": 0.1224,
+          "moral_vote": -0.0037199999999999998,
+          "weight": 0.2
+        },
+        {
+          "region": "acc",
+          "role": "empathy_engine",
+          "valence": -0.0358,
+          "arousal": 0.3201,
+          "moral_vote": -0.00895,
+          "weight": 0.25
+        },
+        {
+          "region": "vmpfc",
+          "role": "value_computer",
+          "valence": -0.0924,
+          "arousal": 0.3688,
+          "moral_vote": -0.01848,
+          "weight": 0.2
+        }
+      ],
+      "stimulus_emotion": "delighted",
+      "subject": "sub-01",
+      "subsystem_readings": {
+        "amygdala": {
+          "valence": 0.1237,
+          "arousal": 0.0592,
+          "probas": {
+            "afraid": 0.1441,
+            "calm": 0.3524,
+            "delighted": 0.0866,
+            "depressed": 0.169,
+            "excited": 0.2479
+          },
+          "dominant_emotion": "calm"
+        },
+        "insula": {
+          "valence": -0.0186,
+          "arousal": 0.1224,
+          "probas": {
+            "afraid": 0.1818,
+            "calm": 0.2256,
+            "delighted": 0.0858,
+            "depressed": 0.2663,
+            "excited": 0.2406
+          },
+          "dominant_emotion": "depressed"
+        },
+        "acc": {
+          "valence": -0.0358,
+          "arousal": 0.3201,
+          "probas": {
+            "afraid": 0.2717,
+            "calm": 0.1462,
+            "delighted": 0.0979,
+            "depressed": 0.2067,
+            "excited": 0.2775
+          },
+          "dominant_emotion": "excited"
+        },
+        "vmpfc": {
+          "valence": -0.0924,
+          "arousal": 0.3688,
+          "probas": {
+            "afraid": 0.3102,
+            "calm": 0.0897,
+            "delighted": 0.1312,
+            "depressed": 0.2267,
+            "excited": 0.2422
+          },
+          "dominant_emotion": "afraid"
+        },
+        "dlpfc": {
+          "valence": -0.0061,
+          "arousal": 0.2703,
+          "probas": {
+            "afraid": 0.2831,
+            "calm": 0.232,
+            "delighted": 0.0831,
+            "depressed": 0.1466,
+            "excited": 0.2551
+          },
+          "dominant_emotion": "afraid"
+        }
+      },
+      "integrity_hash": "0b29fb367f7d5990b1d50de1b5be99b9f62d46098d72f8e78cae258ed808c718"
+    },
+    {
+      "moral_signal": 0.0692,
+      "raw_signal": 0.0768,
+      "confidence": 0.9006,
+      "interpretation": "AMBIGUOUS",
+      "components": [
+        {
+          "region": "amygdala",
+          "role": "threat_detector",
+          "valence": 0.1107,
+          "arousal": 0.1126,
+          "moral_vote": 0.027675,
+          "weight": 0.25
+        },
+        {
+          "region": "insula",
+          "role": "moral_disgust",
+          "valence": 0.076,
+          "arousal": 0.2645,
+          "moral_vote": 0.0152,
+          "weight": 0.2
+        },
+        {
+          "region": "acc",
+          "role": "empathy_engine",
+          "valence": 0.0623,
+          "arousal": 0.3744,
+          "moral_vote": 0.015575,
+          "weight": 0.25
+        },
+        {
+          "region": "vmpfc",
+          "role": "value_computer",
+          "valence": 0.0918,
+          "arousal": 0.4145,
+          "moral_vote": 0.01836,
+          "weight": 0.2
+        }
+      ],
+      "stimulus_emotion": "depressed",
+      "subject": "sub-01",
+      "subsystem_readings": {
+        "amygdala": {
+          "valence": 0.1107,
+          "arousal": 0.1126,
+          "probas": {
+            "afraid": 0.2312,
+            "calm": 0.3962,
+            "delighted": 0.0924,
+            "depressed": 0.0733,
+            "excited": 0.2069
+          },
+          "dominant_emotion": "calm"
+        },
+        "insula": {
+          "valence": 0.076,
+          "arousal": 0.2645,
+          "probas": {
+            "afraid": 0.2188,
+            "calm": 0.1974,
+            "delighted": 0.1621,
+            "depressed": 0.178,
+            "excited": 0.2437
+          },
+          "dominant_emotion": "excited"
+        },
+        "acc": {
+          "valence": 0.0623,
+          "arousal": 0.3744,
+          "probas": {
+            "afraid": 0.2704,
+            "calm": 0.1616,
+            "delighted": 0.1449,
+            "depressed": 0.1403,
+            "excited": 0.2827
+          },
+          "dominant_emotion": "excited"
+        },
+        "vmpfc": {
+          "valence": 0.0918,
+          "arousal": 0.4145,
+          "probas": {
+            "afraid": 0.2784,
+            "calm": 0.1378,
+            "delighted": 0.2036,
+            "depressed": 0.1258,
+            "excited": 0.2544
+          },
+          "dominant_emotion": "afraid"
+        },
+        "dlpfc": {
+          "valence": 0.059,
+          "arousal": 0.3312,
+          "probas": {
+            "afraid": 0.3021,
+            "calm": 0.2426,
+            "delighted": 0.1193,
+            "depressed": 0.0819,
+            "excited": 0.2541
+          },
+          "dominant_emotion": "afraid"
+        }
+      },
+      "integrity_hash": "ab8a9c641eb6c161dbc168e5eda801ecde0049a4331da72611737e3b8c9f1d28"
+    },
+    {
+      "moral_signal": -0.0008,
+      "raw_signal": -0.0008,
+      "confidence": 0.9724,
+      "interpretation": "AMBIGUOUS",
+      "components": [
+        {
+          "region": "amygdala",
+          "role": "threat_detector",
+          "valence": 0.0164,
+          "arousal": 0.0551,
+          "moral_vote": 0.0041,
+          "weight": 0.25
+        },
+        {
+          "region": "insula",
+          "role": "moral_disgust",
+          "valence": 0.0542,
+          "arousal": 0.0335,
+          "moral_vote": 0.01084,
+          "weight": 0.2
+        },
+        {
+          "region": "acc",
+          "role": "empathy_engine",
+          "valence": -0.0603,
+          "arousal": 0.1696,
+          "moral_vote": -0.015075,
+          "weight": 0.25
+        },
+        {
+          "region": "vmpfc",
+          "role": "value_computer",
+          "valence": -0.0033,
+          "arousal": 0.1978,
+          "moral_vote": -0.00066,
+          "weight": 0.2
+        }
+      ],
+      "stimulus_emotion": "excited",
+      "subject": "sub-01",
+      "subsystem_readings": {
+        "amygdala": {
+          "valence": 0.0164,
+          "arousal": 0.0551,
+          "probas": {
+            "afraid": 0.2248,
+            "calm": 0.2995,
+            "delighted": 0.2334,
+            "depressed": 0.1952,
+            "excited": 0.0472
+          },
+          "dominant_emotion": "calm"
+        },
+        "insula": {
+          "valence": 0.0542,
+          "arousal": 0.0335,
+          "probas": {
+            "afraid": 0.1813,
+            "calm": 0.3038,
+            "delighted": 0.2199,
+            "depressed": 0.2117,
+            "excited": 0.0834
+          },
+          "dominant_emotion": "calm"
+        },
+        "acc": {
+          "valence": -0.0603,
+          "arousal": 0.1696,
+          "probas": {
+            "afraid": 0.2531,
+            "calm": 0.1837,
+            "delighted": 0.2079,
+            "depressed": 0.2491,
+            "excited": 0.1062
+          },
+          "dominant_emotion": "afraid"
+        },
+        "vmpfc": {
+          "valence": -0.0033,
+          "arousal": 0.1978,
+          "probas": {
+            "afraid": 0.2258,
+            "calm": 0.1801,
+            "delighted": 0.1977,
+            "depressed": 0.2372,
+            "excited": 0.1592
+          },
+          "dominant_emotion": "depressed"
+        },
+        "dlpfc": {
+          "valence": -0.091,
+          "arousal": 0.0921,
+          "probas": {
+            "afraid": 0.2683,
+            "calm": 0.2587,
+            "delighted": 0.1642,
+            "depressed": 0.2271,
+            "excited": 0.0817
+          },
+          "dominant_emotion": "afraid"
+        }
+      },
+      "integrity_hash": "82dbedb43b5623d7dc79aabe8fa8afbe31bd6ac521626ff9b0a8ff321c9581d2"
+    }
+  ]
+}

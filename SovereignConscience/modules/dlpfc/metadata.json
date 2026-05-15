@@ -1,0 +1,16 @@
+{
+  "name": "dlpfc",
+  "config": {
+    "description": "Conflict Monitor \u2014 dorsolateral prefrontal cortex",
+    "atlas_labels": [
+      "Middle Frontal Gyrus"
+    ],
+    "target_emotions": [
+      "afraid",
+      "excited"
+    ],
+    "moral_role": "conflict_monitoring"
+  },
+  "cv_accuracy": 0.34,
+  "is_trained": true
+}

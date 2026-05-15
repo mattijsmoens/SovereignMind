@@ -1,0 +1,17 @@
+{
+  "name": "insula",
+  "config": {
+    "description": "Disgust Circuit \u2014 bilateral anterior insula",
+    "atlas_labels": [
+      "Left Insular Cortex",
+      "Right Insular Cortex"
+    ],
+    "target_emotions": [
+      "afraid",
+      "depressed"
+    ],
+    "moral_role": "revulsion_signal"
+  },
+  "cv_accuracy": 0.34,
+  "is_trained": true
+}

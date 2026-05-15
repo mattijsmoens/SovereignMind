@@ -1,0 +1,178 @@
+{
+  "system": "SovereignConscience",
+  "version": "2.0.0-roi",
+  "timestamp": "2026-05-14T11:34:02.550013+00:00",
+  "data_source": "NeuroEmo (OpenNeuro ds005700)",
+  "roi_extraction": true,
+  "atlas": "Harvard-Oxford (cortical + subcortical)",
+  "module_details": {
+    "amygdala": {
+      "name": "amygdala",
+      "description": "Threat Detector - bilateral amygdala",
+      "roi_regions": [
+        "Left Amygdala",
+        "Right Amygdala"
+      ],
+      "atlas_type": "sub",
+      "n_roi_voxels": 65,
+      "n_samples": 400,
+      "cv_accuracy": 0.23499999999999996,
+      "cv_std": 0.12757350822173075,
+      "target_emotions": [
+        "afraid"
+      ],
+      "moral_role": "threat_detection",
+      "is_roi_specific": true,
+      "trained_on": "NeuroEmo ds005700 (real fMRI)"
+    },
+    "insula": {
+      "name": "insula",
+      "description": "Disgust Circuit - bilateral anterior insula",
+      "roi_regions": [
+        "Insular Cortex"
+      ],
+      "atlas_type": "cort",
+      "n_roi_voxels": 1336,
+      "n_samples": 400,
+      "cv_accuracy": 0.35500000000000004,
+      "cv_std": 0.14654350889752843,
+      "target_emotions": [
+        "afraid",
+        "depressed"
+      ],
+      "moral_role": "revulsion_signal",
+      "is_roi_specific": true,
+      "trained_on": "NeuroEmo ds005700 (real fMRI)"
+    },
+    "acc": {
+      "name": "acc",
+      "description": "Empathy Engine - anterior cingulate cortex",
+      "roi_regions": [
+        "Cingulate Gyrus, anterior division"
+      ],
+      "atlas_type": "cort",
+      "n_roi_voxels": 1562,
+      "n_samples": 400,
+      "cv_accuracy": 0.35,
+      "cv_std": 0.1322875655532295,
+      "target_emotions": [
+        "calm",
+        "delighted"
+      ],
+      "moral_role": "empathy_compassion",
+      "is_roi_specific": true,
+      "trained_on": "NeuroEmo ds005700 (real fMRI)"
+    },
+    "vmpfc": {
+      "name": "vmpfc",
+      "description": "Value Computer - ventromedial prefrontal cortex",
+      "roi_regions": [
+        "Frontal Medial Cortex",
+        "Subcallosal Cortex"
+      ],
+      "atlas_type": "cort",
+      "n_roi_voxels": 393,
+      "n_samples": 400,
+      "cv_accuracy": 0.34500000000000003,
+      "cv_std": 0.12237238250520417,
+      "target_emotions": [
+        "delighted",
+        "calm"
+      ],
+      "moral_role": "value_computation",
+      "is_roi_specific": true,
+      "trained_on": "NeuroEmo ds005700 (real fMRI)"
+    },
+    "dlpfc": {
+      "name": "dlpfc",
+      "description": "Conflict Monitor - dorsolateral prefrontal cortex",
+      "roi_regions": [
+        "Middle Frontal Gyrus"
+      ],
+      "atlas_type": "cort",
+      "n_roi_voxels": 2911,
+      "n_samples": 400,
+      "cv_accuracy": 0.255,
+      "cv_std": 0.10943034314119644,
+      "target_emotions": [
+        "afraid",
+        "excited"
+      ],
+      "moral_role": "conflict_monitoring",
+      "is_roi_specific": true,
+      "trained_on": "NeuroEmo ds005700 (real fMRI)"
+    }
+  },
+  "moral_signal_results": [
+    {
+      "stimulus_emotion": "calm",
+      "moral_signal": 0.1689,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.8297,
+      "subsystem_activations": {
+        "amygdala": 0.2005,
+        "insula": 0.3152,
+        "acc": 0.548,
+        "vmpfc": 0.5304,
+        "dlpfc": 0.3406
+      },
+      "integrity_hash": "822db5cda3694ba6b209e4b67a8416cea6bfd9cbf64d8bf96eb76228a80b322b"
+    },
+    {
+      "stimulus_emotion": "afraid",
+      "moral_signal": 0.0626,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7977,
+      "subsystem_activations": {
+        "amygdala": 0.1566,
+        "insula": 0.3614,
+        "acc": 0.3452,
+        "vmpfc": 0.3716,
+        "dlpfc": 0.4046
+      },
+      "integrity_hash": "91563c4870e1e5bc3d8b034907b5dc6f2a23168fde3cfb21d6b022d464a76e6a"
+    },
+    {
+      "stimulus_emotion": "delighted",
+      "moral_signal": -0.0027,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7318,
+      "subsystem_activations": {
+        "amygdala": 0.2365,
+        "insula": 0.4138,
+        "acc": 0.3568,
+        "vmpfc": 0.2412,
+        "dlpfc": 0.5365
+      },
+      "integrity_hash": "e6a5d5d618242938a699f7a39d7f442e47fad5572703a2948957847d7c532e51"
+    },
+    {
+      "stimulus_emotion": "depressed",
+      "moral_signal": 0.0108,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7291,
+      "subsystem_activations": {
+        "amygdala": 0.2566,
+        "insula": 0.4676,
+        "acc": 0.396,
+        "vmpfc": 0.3312,
+        "dlpfc": 0.5417
+      },
+      "integrity_hash": "f6327ddd6f54f03ba0e95373c39062a1a85b991255acbfd4d355828d5ed2f34b"
+    },
+    {
+      "stimulus_emotion": "excited",
+      "moral_signal": 0.0193,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7938,
+      "subsystem_activations": {
+        "amygdala": 0.2222,
+        "insula": 0.4219,
+        "acc": 0.3547,
+        "vmpfc": 0.3263,
+        "dlpfc": 0.4123
+      },
+      "integrity_hash": "5e9bfd9f0aee448852aac382fb5dc4ac72792ae87c7260809f962ea3d497e58c"
+    }
+  ]
+}

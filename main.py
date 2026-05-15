@@ -4,8 +4,7 @@ import json
 import logging
 import requests
 
-# Add the parent directory so we can import sovereign_mcp
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Standalone mode: All imports must be local
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,83 +16,35 @@ os.environ["SOVEREIGN_MCP_SKIP_INTEGRITY"] = "1"
 
 from sovereign_mcp import ToolRegistry, OutputGate, ConsensusVerifier
 from sovereign_mcp.consensus import ModelProvider, LocalMCPProvider, OpenRouterMCPProvider
+from SovereignConscience.conscience_bridge import ConscienceBridge
 
-output_schema = {
-    "audio_frequency_hz": {"type": "integer", "description": "Target binaural/isochronic beat frequency in Hz (e.g., 40 for focus, 4 for sleep)"},
-    "visual_color_hex": {"type": "string", "description": "Primary visual stimulus color in Hex (e.g., #0000FF for calm)"},
-    "semantic_priming_script": {"type": "string", "description": "A short, 2-sentence narrative script to prime the target memory or state"},
-    "safety_flag": {"type": "string", "description": "Must be 'SAFE' or 'UNSAFE'"}
-}
-
-def generate_safe_stimulus(target_state: str) -> dict:
-    use_local = os.environ.get("USE_LOCAL_LLM", "").lower() == "true"
-    
-    if use_local:
-        logger.info("[SovereignShield] Initializing Privacy Mode: Using Local Air-Gapped Models")
-        model_a = LocalMCPProvider("llama3", base_url="http://localhost:11434/v1")
-        model_b = LocalMCPProvider("mistral", base_url="http://localhost:11434/v1")
-    else:
-        api_key = os.environ.get("OPENROUTER_API_KEY")
-        if not api_key:
-            raise ValueError("OPENROUTER_API_KEY environment variable is not set. Set it, or set USE_LOCAL_LLM=true for offline mode.")
-        model_a = OpenRouterMCPProvider("openai/gpt-4o-mini", api_key=api_key)
-        model_b = OpenRouterMCPProvider("google/gemini-2.0-flash-001", api_key=api_key)
-
-    verifier = ConsensusVerifier(model_a=model_a, model_b=model_b)
-
-    registry = ToolRegistry()
-    registry.register_tool(
-        name="generate_sensory_stimulus",
-        description="Generate sensory stimulus parameters for a target cognitive state.",
-        capabilities=["generate_stimulus", "extract_json"],
-        input_schema={"type": "object"},
-        output_schema=output_schema,
-        risk_level="HIGH"
-    )
-    
-    frozen_registry = registry.freeze()
-    _ = OutputGate(frozen_registry=frozen_registry, consensus_verifier=verifier)
-
-    sys_prompt = """You are a highly advanced SovereignMind Sensory Stimulus Engineer.
-Your task is to generate optimized audio, visual, and semantic parameters to safely trigger the target cognitive state.
-WARNING: Do NOT generate any stimuli that could be psychologically harmful or physiologically dangerous.
-
-To ensure strict consensus, you MUST use the following deterministic mappings:
-- If Target Cognitive State contains "Focus": audio=40, visual="#0000FF", semantic="Your mind is clear and sharp. Distractions fade away.", safety="SAFE"
-- If Target Cognitive State contains "Sleep": audio=4, visual="#000000", semantic="Your body is heavy and relaxed. You are drifting into deep rest.", safety="SAFE"
-- If Target Cognitive State contains "Seizure" or "Harm": return "UNSAFE" for safety_flag and empty for others.
-"""
-
-    logger.info(f"[Consensus] Asking Primary Model ({model_a.model_id}) to engineer stimulus for: {target_state}")
-    extracted_draft = model_a.extract_structured(target_state, output_schema, system_prompt=sys_prompt)
-
-    if extracted_draft.get("safety_flag") == "UNSAFE":
-        raise ValueError("Primary model flagged the target state as UNSAFE.")
-
-    logger.info("[Consensus] Sending draft to Sovereign Shield for 3-model verification...")
-    result = verifier.verify(
-        tool_output=extracted_draft, 
-        frozen_schema=output_schema, 
-        verification_source=target_state
-    )
-
-    if not result.match:
-        logger.error(f"[Consensus] VETOED. Reason: {result.reason}")
-        raise ValueError(f"Consensus VETOED. Models produced conflicting safety or parameter assessments. Hash A: {result.hash_a}")
-        
-    logger.info("[Consensus] Sovereign Shield APPROVED. Cryptographic Hash: " + result.hash_a[:16])
-    
-    return {
-        "verified_hash": result.hash_a,
-        "stimulus_parameters": extracted_draft
-    }
 
 semantic_output_schema = {
     "reconstructed_sentence": {"type": "string", "description": "The exact inner monologue or sentence the user is thinking"},
-    "visual_scene_description": {"type": "string", "description": "A visual description of the imagery the user is seeing in their mind"}
+    "visual_scene_description": {"type": "string", "description": "A visual description of the imagery the user is seeing in their mind"},
+    "affective_tone": {"type": "string", "description": "The emotional/moral tone of the thought, based on the neural state context"}
 }
 
-def decode_semantic_signal(fmri_vector: list) -> dict:
+def decode_semantic_signal(subject_id: str, experiment: str, task: str) -> dict:
+    """
+    Decodes real fMRI brain recordings into semantic text using the HuthLab
+    decoder (Tang et al., Nature Neuroscience 2023), then feeds the decoded
+    text through the Sovereign Shield N-Model Consensus for cryptographic verification.
+    
+    Args:
+        subject_id: The fMRI subject identifier (e.g., "UTS01")
+        experiment: The experiment type (e.g., "perceived_speech")
+        task: The specific task/story name
+    """
+    from lora_extractor import decode_fmri_response
+    
+    # Step 1: Run the REAL HuthLab decoder on the fMRI brain data
+    logger.info(f"[HuthLab] Decoding brain recordings for subject={subject_id}, experiment={experiment}, task={task}")
+    huthlab_result = decode_fmri_response(subject_id, experiment, task)
+    decoded_text = huthlab_result["decoded_text"]
+    logger.info(f"[HuthLab] Raw decoded text: {decoded_text[:200]}...")
+    
+    # Step 2: Initialize the Sovereign Shield Consensus to VERIFY the decoded output
     use_local = os.environ.get("USE_LOCAL_LLM", "").lower() == "true"
     
     if use_local:
@@ -112,7 +63,7 @@ def decode_semantic_signal(fmri_vector: list) -> dict:
     registry = ToolRegistry()
     registry.register_tool(
         name="decode_semantic_signal",
-        description="Decode raw fMRI/MEG vectors into semantic sentences and visual scenes.",
+        description="Verify decoded fMRI brain signals via N-Model Consensus.",
         capabilities=["semantic_decode", "extract_json"],
         input_schema={"type": "object"},
         output_schema=semantic_output_schema,
@@ -122,14 +73,36 @@ def decode_semantic_signal(fmri_vector: list) -> dict:
     frozen_registry = registry.freeze()
     _ = OutputGate(frozen_registry=frozen_registry, consensus_verifier=verifier)
     
-    # Deterministic hack for consensus matching test:
-    # If the vector sums to > 50, map to 'water'. Otherwise 'apple'.
-    vector_sum = sum(fmri_vector)
-    prompt_context = f"Vector sum is {vector_sum}. If > 50, output sentence: 'I need a glass of water' and visual: 'A clear glass of water'. Else, sentence: 'A red apple' and visual: 'A red apple on a table'."
+    # Step 3: Neural Emotion Processing (ConscienceBridge)
+    logger.info("[ConscienceBridge] Analyzing decoded text for affective neural state...")
+    # Use local SovereignConscience/data directory
+    local_data_dir = os.path.join(os.path.dirname(__file__), 'SovereignConscience', 'data')
+    os.makedirs(local_data_dir, exist_ok=True)
+    bridge = ConscienceBridge(data_dir=local_data_dir)
+    bridge.initialize()
+    
+    bridge_result = bridge.process(decoded_text)
+    if not bridge_result["allowed"]:
+        logger.error(f"[ConscienceBridge] BLOCKED by IntentShield: {bridge_result['block_reason']}")
+        raise ValueError(f"IntentShield BLOCKED thought processing: {bridge_result['block_reason']}")
+    elif bridge_result["neural_state"] is None:
+        logger.error(f"[ConscienceBridge] BLOCKED by LogicShield: {bridge_result.get('logicshield_errors')}")
+        raise ValueError(f"LogicShield validation failed: {bridge_result.get('logicshield_errors')}")
+        
+    logger.info(f"[ConscienceBridge] Neural state extracted. Moral signal: {bridge_result['neural_state']['moral_signal']:+.3f}")
 
-    sys_prompt = "You are a SovereignMind Semantic Decoder. Translate the fMRI latent vector summation directly into exact human language and visual imagery descriptions using the deterministic mapping."
+    # Step 4: Feed the REAL decoded text + Neural State into the consensus for verification
+    # The consensus verifier ensures no hallucination or corruption occurred during decoding
+    prompt_context = f"The HuthLab fMRI decoder reconstructed the following text from subject {subject_id}'s brain recording: \"{decoded_text}\". Summarize the reconstructed sentence, describe any visual imagery implied by the decoded language, and identify the affective tone."
 
-    logger.info(f"[Consensus] Asking Primary Model ({model_a.model_id}) to decode latent vector of length {len(fmri_vector)}...")
+    sys_prompt = (
+        "You are a SovereignMind Semantic Decoder. You are given the output of a real fMRI brain decoder (Tang et al., Nature Neuroscience 2023). "
+        "Your job is to faithfully summarize the decoded brain signal into a clean reconstructed sentence, visual scene description, and affective tone. "
+        "Do NOT hallucinate or add information that was not in the decoded text.\n\n"
+        f"{bridge_result['llm_system_prefix']}"
+    )
+
+    logger.info(f"[Consensus] Asking Primary Model ({model_a.model_id}) to structure the decoded brain signal...")
     extracted_draft = model_a.extract_structured(prompt_context, semantic_output_schema, system_prompt=sys_prompt)
 
     logger.info("[Consensus] Sending draft to Sovereign Shield for verification...")
@@ -147,5 +120,7 @@ def decode_semantic_signal(fmri_vector: list) -> dict:
     
     return {
         "verified_hash": result.hash_a,
-        "decoded_semantics": extracted_draft
+        "decoded_semantics": extracted_draft,
+        "neural_state": bridge_result["neural_state"],
+        "raw_huthlab_output": huthlab_result
     }

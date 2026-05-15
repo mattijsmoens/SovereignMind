@@ -1,0 +1,22 @@
+{
+  "name": "acc",
+  "description": "Empathy Engine - anterior cingulate cortex",
+  "roi_regions": [
+    "Cingulate Gyrus, anterior division"
+  ],
+  "atlas_type": "cort",
+  "n_roi_voxels": 50,
+  "n_raw_voxels": 1562,
+  "n_excluded_subjects": 0,
+  "excluded_subjects": [],
+  "n_samples": 400,
+  "cv_accuracy": 0.2125,
+  "cv_std": 0.10997158723961384,
+  "target_emotions": [
+    "calm",
+    "delighted"
+  ],
+  "moral_role": "empathy_compassion",
+  "is_roi_specific": true,
+  "trained_on": "NeuroEmo ds005700 (real fMRI)"
+}

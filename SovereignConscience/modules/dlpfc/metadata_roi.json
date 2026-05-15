@@ -1,0 +1,22 @@
+{
+  "name": "dlpfc",
+  "description": "Conflict Monitor - dorsolateral prefrontal cortex",
+  "roi_regions": [
+    "Middle Frontal Gyrus"
+  ],
+  "atlas_type": "cort",
+  "n_roi_voxels": 50,
+  "n_raw_voxels": 2911,
+  "n_excluded_subjects": 0,
+  "excluded_subjects": [],
+  "n_samples": 400,
+  "cv_accuracy": 0.16999999999999998,
+  "cv_std": 0.11661903789690602,
+  "target_emotions": [
+    "afraid",
+    "excited"
+  ],
+  "moral_role": "conflict_monitoring",
+  "is_roi_specific": true,
+  "trained_on": "NeuroEmo ds005700 (real fMRI)"
+}

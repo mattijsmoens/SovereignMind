@@ -1,0 +1,22 @@
+{
+  "name": "insula",
+  "description": "Disgust Circuit - bilateral anterior insula",
+  "roi_regions": [
+    "Insular Cortex"
+  ],
+  "atlas_type": "cort",
+  "n_roi_voxels": 50,
+  "n_raw_voxels": 1336,
+  "n_excluded_subjects": 0,
+  "excluded_subjects": [],
+  "n_samples": 400,
+  "cv_accuracy": 0.2625,
+  "cv_std": 0.11765946625750094,
+  "target_emotions": [
+    "afraid",
+    "depressed"
+  ],
+  "moral_role": "revulsion_signal",
+  "is_roi_specific": true,
+  "trained_on": "NeuroEmo ds005700 (real fMRI)"
+}

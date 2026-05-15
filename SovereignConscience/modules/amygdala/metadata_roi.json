@@ -1,0 +1,25 @@
+{
+  "name": "amygdala",
+  "description": "Threat Detector - bilateral amygdala",
+  "roi_regions": [
+    "Left Amygdala",
+    "Right Amygdala"
+  ],
+  "atlas_type": "sub",
+  "n_roi_voxels": 50,
+  "n_raw_voxels": 187,
+  "n_excluded_subjects": 2,
+  "excluded_subjects": [
+    "sub-03",
+    "sub-05"
+  ],
+  "n_samples": 380,
+  "cv_accuracy": 0.17368421052631577,
+  "cv_std": 0.12070889411768122,
+  "target_emotions": [
+    "afraid"
+  ],
+  "moral_role": "threat_detection",
+  "is_roi_specific": true,
+  "trained_on": "NeuroEmo ds005700 (real fMRI)"
+}

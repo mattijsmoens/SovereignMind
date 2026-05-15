@@ -1,0 +1,17 @@
+{
+  "name": "vmpfc",
+  "config": {
+    "description": "Value Computer \u2014 ventromedial prefrontal cortex",
+    "atlas_labels": [
+      "Frontal Medial Cortex",
+      "Subcallosal Cortex"
+    ],
+    "target_emotions": [
+      "delighted",
+      "calm"
+    ],
+    "moral_role": "value_computation"
+  },
+  "cv_accuracy": 0.34,
+  "is_trained": true
+}

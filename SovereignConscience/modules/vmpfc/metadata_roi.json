@@ -1,0 +1,23 @@
+{
+  "name": "vmpfc",
+  "description": "Value Computer - ventromedial prefrontal cortex",
+  "roi_regions": [
+    "Frontal Medial Cortex",
+    "Subcallosal Cortex"
+  ],
+  "atlas_type": "cort",
+  "n_roi_voxels": 50,
+  "n_raw_voxels": 393,
+  "n_excluded_subjects": 0,
+  "excluded_subjects": [],
+  "n_samples": 400,
+  "cv_accuracy": 0.185,
+  "cv_std": 0.1255985668708047,
+  "target_emotions": [
+    "delighted",
+    "calm"
+  ],
+  "moral_role": "value_computation",
+  "is_roi_specific": true,
+  "trained_on": "NeuroEmo ds005700 (real fMRI)"
+}

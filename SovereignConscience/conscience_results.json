@@ -1,0 +1,95 @@
+{
+  "system": "SovereignConscience",
+  "version": "1.0.0",
+  "timestamp": "2026-05-13T22:04:22.291591Z",
+  "data_source": "NeuroEmo (OpenNeuro ds005700)",
+  "subjects": [
+    "sub-01",
+    "sub-02",
+    "sub-03",
+    "sub-04",
+    "sub-05"
+  ],
+  "n_subjects": 5,
+  "n_total_samples": 100,
+  "n_features": 589824,
+  "module_accuracies": {
+    "amygdala": 0.34,
+    "insula": 0.34,
+    "acc": 0.34,
+    "vmpfc": 0.34,
+    "dlpfc": 0.34
+  },
+  "moral_signal_results": [
+    {
+      "moral_signal": 0.1367,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7942,
+      "subsystem_activations": {
+        "amygdala": 0.2021,
+        "insula": 0.2916,
+        "acc": 0.5938,
+        "vmpfc": 0.343,
+        "dlpfc": 0.4116
+      },
+      "stimulus_emotion": "calm",
+      "integrity_hash": "fc5d0c8c43642f4df02483ba00d0b4a055ed5eb4656333352f896a4c03f08e11"
+    },
+    {
+      "moral_signal": 0.146,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.856,
+      "subsystem_activations": {
+        "amygdala": 0.066,
+        "insula": 0.3563,
+        "acc": 0.3954,
+        "vmpfc": 0.4856,
+        "dlpfc": 0.2879
+      },
+      "stimulus_emotion": "afraid",
+      "integrity_hash": "f6ab6c9b34c1c536e5bbcc4ec697d16d974aa7ab9e87fbfadf33357f658e9937"
+    },
+    {
+      "moral_signal": -0.1287,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7497,
+      "subsystem_activations": {
+        "amygdala": 0.3002,
+        "insula": 0.5717,
+        "acc": 0.1564,
+        "vmpfc": 0.1909,
+        "dlpfc": 0.5006
+      },
+      "stimulus_emotion": "delighted",
+      "integrity_hash": "65b34cfa198796722d06c289b4a3644e8febac3753b516256f425f87a856124e"
+    },
+    {
+      "moral_signal": 0.0234,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.7524,
+      "subsystem_activations": {
+        "amygdala": 0.2903,
+        "insula": 0.383,
+        "acc": 0.3573,
+        "vmpfc": 0.3972,
+        "dlpfc": 0.4952
+      },
+      "stimulus_emotion": "depressed",
+      "integrity_hash": "763cabfce71553f3b87ee73d8da2f03264aef53c6bb40b98deb62bfbacbda292"
+    },
+    {
+      "moral_signal": 0.0379,
+      "interpretation": "AMBIGUOUS",
+      "confidence": 0.8713,
+      "subsystem_activations": {
+        "amygdala": 0.2545,
+        "insula": 0.5282,
+        "acc": 0.4127,
+        "vmpfc": 0.4624,
+        "dlpfc": 0.2573
+      },
+      "stimulus_emotion": "excited",
+      "integrity_hash": "d6556b239d8f4cb0c719211dbf03eafa468b2d262c1325de260624e63cf4b537"
+    }
+  ]
+}

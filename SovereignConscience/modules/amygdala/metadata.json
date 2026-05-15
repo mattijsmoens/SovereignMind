@@ -1,0 +1,16 @@
+{
+  "name": "amygdala",
+  "config": {
+    "description": "Threat Detector \u2014 bilateral amygdala",
+    "atlas_labels": [
+      "Left Amygdala",
+      "Right Amygdala"
+    ],
+    "target_emotions": [
+      "afraid"
+    ],
+    "moral_role": "threat_detection"
+  },
+  "cv_accuracy": 0.34,
+  "is_trained": true
+}
